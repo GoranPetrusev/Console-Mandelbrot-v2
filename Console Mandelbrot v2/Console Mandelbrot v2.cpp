@@ -12,7 +12,7 @@ int main()
 	for( int i = 0; i < n_screenHeight * n_screenWidth; i++ ) screen[i] = L'#';
 	HANDLE hConsole = CreateConsoleScreenBuffer( GENERIC_READ | GENERIC_WRITE,0,NULL,CONSOLE_TEXTMODE_BUFFER,NULL );
 	SetConsoleActiveScreenBuffer( hConsole );
-	DWORD dwBytesWritten = 0;
+	DWORD dwBytesWritten = 0; // Idk man, windows moment
 
 	// Declaring the variables outside of the loops so they don't have to be created like a trillion times
 	double x0,y0;
@@ -34,18 +34,20 @@ int main()
 	// Main Loop
 	while( true )
 	{
-		scaling *= (GetAsyncKeyState( 0x53 ))?1.03:1; // S - Scaling Down
-		scaling /= (GetAsyncKeyState( 0x57 ))?1.03:1; // W - Scaling Up
+		scaling *= (GetAsyncKeyState( 0x53 ))	? 1.03 : 1; // S - Scaling Down
+		scaling /= (GetAsyncKeyState( 0x57 ))	? 1.03 : 1; // W - Scaling Up
 
-		x_off += GetAsyncKeyState( VK_LEFT )?3 * fElapsedTime:0;
-		x_off -= GetAsyncKeyState( VK_RIGHT )?3 * fElapsedTime:0;
-		y_off += GetAsyncKeyState( VK_UP )?3 * fElapsedTime:0;
-		y_off -= GetAsyncKeyState( VK_DOWN )?3 * fElapsedTime:0;
+		x_off += GetAsyncKeyState( VK_LEFT )	? 3 * fElapsedTime : 0;
+		x_off -= GetAsyncKeyState( VK_RIGHT )	? 3 * fElapsedTime : 0;
+		y_off += GetAsyncKeyState( VK_UP )	? 3 * fElapsedTime : 0;
+		y_off -= GetAsyncKeyState( VK_DOWN )	? 3 * fElapsedTime : 0;
 
 
+		// Using the chrono to capture how long it takes a to render a particular frame
+		// The elapsed time is used to smooth out the panning
 		start = std::chrono::steady_clock::now();
 
-
+		// Mandelbrot calculation starts here
 		for( int py = 0; py < n_screenHeight; py++ )
 		{
 			y0 = ((double)py * 0.066666666667 - y_off) * scaling;
@@ -67,13 +69,17 @@ int main()
 					iteration++;
 				}
 
+				// Very elegant way of deciding which character to use based on the number of iterations it took for the current pixel
+				// (i really like this specific line, i applaud my genius)
 				screen[py * n_screenWidth + px] = L" .,~-=+'^\"![*oqaOQH@G#"[int( iteration * 0.042 )];
 			}
 		}
 
+		// More chrono bullshit
 		runtime = std::chrono::steady_clock::now() - start;
 		fElapsedTime = runtime.count();
 
+		
 		// Displaying Frame
 		WriteConsoleOutputCharacter( hConsole,screen,n_screenHeight * n_screenWidth,{ 0,0 },&dwBytesWritten );
 	}
