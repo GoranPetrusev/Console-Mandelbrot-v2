@@ -4,7 +4,7 @@
 const int n_screenWidth = 100;
 const int n_screenHeight = 30;
 
-const int max_iteration = 500;
+const int max_iteration = 1000;
 
 int main()
 {
@@ -19,7 +19,6 @@ int main()
 	double x,y;
 	int iteration;
 	double temp_x;
-	int index;
 
 	// Panning variables
 	double scaling = 1.0;
@@ -27,34 +26,34 @@ int main()
 	double y_off = 1;
 
 	// Chrono bullshit
-	std::chrono::steady_clock::time_point start;
+	std::chrono::steady_clock::time_point last;
 	std::chrono::duration<double> runtime;
 	double fElapsedTime = 0;
 
 	// Main Loop
 	while( true )
 	{
-		scaling *= (GetAsyncKeyState( 0x53 ))	? 1.03 : 1; // S - Scaling Down
-		scaling /= (GetAsyncKeyState( 0x57 ))	? 1.03 : 1; // W - Scaling Up
+		scaling *= (GetAsyncKeyState( 0x53 ))	? 1.01 : 1; // S - Scaling Down
+		scaling /= (GetAsyncKeyState( 0x57 ))	? 1.01 : 1; // W - Scaling Up
 
-		x_off += GetAsyncKeyState( VK_LEFT )	? 3 * fElapsedTime : 0; // Move Left
-		x_off -= GetAsyncKeyState( VK_RIGHT )	? 3 * fElapsedTime : 0; // Move Right
-		y_off += GetAsyncKeyState( VK_UP )	? 3 * fElapsedTime : 0; // Move Up
-		y_off -= GetAsyncKeyState( VK_DOWN )	? 3 * fElapsedTime : 0; // Move Down
+		x_off += GetAsyncKeyState( VK_LEFT )	? 3 * fElapsedTime * scaling : 0; // Move Left
+		x_off -= GetAsyncKeyState( VK_RIGHT )	? 3 * fElapsedTime * scaling : 0; // Move Right
+		y_off += GetAsyncKeyState( VK_UP )		? 3 * fElapsedTime * scaling : 0; // Move Up
+		y_off -= GetAsyncKeyState( VK_DOWN )	? 3 * fElapsedTime * scaling : 0; // Move Down
 
 
 		// Using the chrono to capture how long it takes a to render a particular frame
 		// The elapsed time is used to smooth out the panning
-		start = std::chrono::steady_clock::now();
+		last = std::chrono::steady_clock::now();
 
 		// Mandelbrot calculation is done in the scope of this for() lopp
 		for( int py = 0; py < n_screenHeight; py++ )
 		{
-			y0 = ((double)py * 0.066666666667 - y_off) * scaling;
+			y0 = (double)py * 0.066666666667 * scaling - y_off;
 
 			for( int px = 0; px < n_screenWidth; px++ )
 			{
-				x0 = ((double)px * 0.035 - x_off) * scaling;
+				x0 = (double)px * 0.035 * scaling - x_off;
 
 				x = 0.0;
 				y = 0.0;
@@ -71,12 +70,12 @@ int main()
 
 				// Very elegant way of deciding which character to use based on the number of iterations it took for the current pixel
 				// (i really like this specific line, i applaud my genius)
-				screen[py * n_screenWidth + px] = L" .,~-=+'^\"![*oqaOQH@G#"[int( iteration * 0.042 )];
+				screen[py * n_screenWidth + px] = (iteration < max_iteration) ? L".,~-=+'^\"![*oqaOQH@G#"[ iteration % 21 ] : L' '; // 22 Characters
 			}
 		}
 
 		// More chrono bullshit
-		runtime = std::chrono::steady_clock::now() - start;
+		runtime = std::chrono::steady_clock::now() - last;
 		fElapsedTime = runtime.count();
 
 		
