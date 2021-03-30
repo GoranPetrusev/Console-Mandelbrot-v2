@@ -1,8 +1,8 @@
 #include <Windows.h>
 #include <chrono>
 
-const int n_screenWidth = 100;
-const int n_screenHeight = 30;
+const int n_screenWidth = 170;
+const int n_screenHeight = 44;
 
 const int max_iteration = 1000;
 
@@ -70,7 +70,7 @@ int main()
 
 				// Very elegant way of deciding which character to use based on the number of iterations it took for the current pixel
 				// (i really like this specific line, i applaud my genius)
-				screen[py * n_screenWidth + px] = (iteration < max_iteration) ? L".,~-=+'^\"![*oqaOQH@G#"[ iteration % 21 ] : L' '; // 22 Characters
+				screen[py * n_screenWidth + px] = (iteration < max_iteration) ? L"#.,~-=+'^\"![*oqaOQH@G"[ iteration % 21 ] : L' '; // 22 Characters
 			}
 		}
 
