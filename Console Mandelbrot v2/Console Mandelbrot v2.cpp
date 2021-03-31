@@ -38,10 +38,10 @@ int main()
 
 		x_off += GetAsyncKeyState( VK_LEFT )	? 3 * fElapsedTime * scaling : 0; // Move Left
 		x_off -= GetAsyncKeyState( VK_RIGHT )	? 3 * fElapsedTime * scaling : 0; // Move Right
-		y_off += GetAsyncKeyState( VK_UP )		? 3 * fElapsedTime * scaling : 0; // Move Up
+		y_off += GetAsyncKeyState( VK_UP )	? 3 * fElapsedTime * scaling : 0; // Move Up
 		y_off -= GetAsyncKeyState( VK_DOWN )	? 3 * fElapsedTime * scaling : 0; // Move Down
 
-
+	
 		// Using the chrono to capture how long it takes a to render a particular frame
 		// The elapsed time is used to smooth out the panning
 		last = std::chrono::steady_clock::now();
